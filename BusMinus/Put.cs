@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Bus_Minus
+﻿namespace Bus_Minus
 {
     public class Put
     {
@@ -57,7 +52,7 @@ namespace Bus_Minus
             string s = " ";
             for (int i = 0; i < brst; i++)
 			{
-			   s+= st[i].Ime;
+			   s+= st[i].Ime + "-";
 			}
             s += duzinaputa;
             return s;

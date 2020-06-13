@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Windows.Forms;
 
 namespace Bus_Minus
 {
@@ -8,17 +6,17 @@ namespace Bus_Minus
     {
         Stanica[] stanice;
         int brStanica;
-        public BusMinus(StreamReader sr)
+        public BusMinus(string[] niz)
         {
-            brStanica = Convert.ToInt32(sr.ReadLine());
+            brStanica = Convert.ToInt32(niz[0]);
             stanice = new Stanica[100 + brStanica];
             for (int i = 0; i < brStanica; i++)
             {
-                stanice[i] = new Stanica(sr.ReadLine());
+                stanice[i] = new Stanica(niz[i + 1]);
             }
-            while (!sr.EndOfStream)
+            for (int i = brStanica + 1; i < niz.Length; i++)
             {
-                string[] s = sr.ReadLine().Split('-');
+                string[] s = niz[i].Split('-');
                 Stanica a = stanice[FindIndexInArray(s[0])];
                 Stanica b = stanice[FindIndexInArray(s[1])];
                 Veza v = new Veza(a, b, Convert.ToInt32(s[2]));
@@ -26,7 +24,17 @@ namespace Bus_Minus
                 b.DodajVezu(v);
             }
         }
-
+        public Stanica this[string imeStanice] 
+        {
+            get {
+                for (int i = 0; i < brStanica; i++) {
+                    if (stanice[i].Ime==imeStanice) {
+                        return stanice[i];
+                    }
+                }
+                return null;
+            }
+        }
         public int FindIndexInArray(string x)
         {
             for (int i = 0; i < brStanica; i++)
@@ -61,18 +69,20 @@ namespace Bus_Minus
                 }
             }*/
         }
-        public void Ispis(ListBox l, string poc, string kraj)
+        public string[] Ispis(string poc, string kraj)
         {
             Stanica[] st = new Stanica[1000];
-            Stanica pocetna = stanice[FindIndexInArray(poc)];
-            Stanica krajna = stanice[FindIndexInArray(kraj)];
+            Stanica pocetna = this[poc];
+            Stanica krajna = this[kraj];
             int brojac = 0;
             Put[] putevi = new Put[10000];
             pocetna.Put(ref st, 0, 0, ref putevi, ref brojac, krajna);
-            for (int i = 0; i < brojac; i++)
+            string[] ispis = new string[brojac];
+            for (int i = 0; i < brojac; i++) 
             {
-                l.Items.Add(putevi[i].Ispis());
+                ispis[i] = putevi[i].Ispis();
             }
+            return ispis;
         }
     }
 }

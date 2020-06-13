@@ -1,4 +1,4 @@
-﻿namespace Bus_Minus
+﻿onamespace Bus_Minus
 {
     public class Stanica
     {
@@ -55,6 +55,7 @@
                     t.Put(ref st, duzinaPuta + veze[i].Udalj, n + 1, ref pt, ref brojac, cilj);
                 }
             }
+            posecena = false;
         }
     }
 }

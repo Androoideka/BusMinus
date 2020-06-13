@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
@@ -16,20 +10,18 @@ namespace Bus_Minus
         {
             InitializeComponent();
         }
-
-        StreamReader sr = new StreamReader("veze.txt");
-
+        
         BusMinus GSP;
         private void Form1_Load(object sender, EventArgs e)
         {
-            GSP = new BusMinus(sr);
+            GSP = new BusMinus(File.ReadAllLines("veze.txt"));
             comboBox1.Items.AddRange(GSP.Prikaz());
             comboBox2.Items.AddRange(GSP.Prikaz());
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            GSP.Ispis(listBox1, comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString());
+            listBox1.Items.AddRange(GSP.Ispis(comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString()));
         }
        
     }
