@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BusMinus
+namespace BusSharp
 {
-    internal abstract class Karta
+    abstract class Karta
     {
         protected int cena, vreme;
         protected DateTime poc;
@@ -17,6 +17,27 @@ namespace BusMinus
             cena = k.cena;
             vreme = k.vreme;
             poc = k.poc;
+        }
+        internal static Karta KupiKartu(string tip)
+        {
+            tip = tip.ToLower();
+            Karta k;
+            switch (tip)
+            {
+                case "jedna voznja":
+                    k = new JednokratnaKarta();
+                    break;
+                case "celodnevna voznja":
+                    k = new DnevnaKarta();
+                    break;
+                case "mesecna voznja":
+                    k = new MesecnaKarta();
+                    break;
+                default:
+                    k = null;
+                    break;
+            }
+            return k;
         }
         internal int Cena
          {
@@ -45,17 +66,17 @@ namespace BusMinus
                 }
             }
         }
-        internal int PreostaloVreme 
+        internal double PreostaloVreme 
         {
             get
             {
-                int prostSek = poc.Second + vreme - DateTime.Now.Second;
+                double prostSek = vreme - (DateTime.Now - poc).TotalSeconds;
                 return prostSek; 
             }
         }
     }
 
-    internal class JednokratnaKarta : Karta
+    class JednokratnaKarta : Karta
     {
         internal JednokratnaKarta()
             : base()
@@ -65,7 +86,7 @@ namespace BusMinus
         }
     }
 
-    internal class DnevnaKarta : Karta
+    class DnevnaKarta : Karta
     {
         internal DnevnaKarta()
             : base()
@@ -75,7 +96,7 @@ namespace BusMinus
         }
     }
 
-    internal class MesecnaKarta : Karta
+    class MesecnaKarta : Karta
     {
         internal MesecnaKarta()
             : base()

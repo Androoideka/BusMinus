@@ -1,6 +1,6 @@
-﻿namespace BusMinus
+﻿namespace BusSharp
 {
-    internal class Stanica
+    class Stanica
     {
         string ime;
         Veza[] veze;
@@ -29,18 +29,19 @@
                 ime = value;
             }
         }
-        internal Veza this[string linija]
+        private int this[string linija]
         {
             get
             {
+                int brojac = 0;
                 for (int i = 0; i < brveza; i++)
                 {
                     if(veze[i].Linija == linija)
                     {
-                        return veze[i];
+                        brojac++;
                     }
                 }
-                return null;
+                return brojac;
             }
         }
         internal void DodajVezu(Veza v)
@@ -68,32 +69,124 @@
             }
             posecena = false;
         }
+        internal Linija PutUIstojLiniji(string ln, ref Veza[] vz, int n)
+        {
+            if (n != 0 && this[ln] == 1)
+            {
+                return new Linija(this, vz, n);
+            }
+            Linija s = null;
+            posecena = true;
+            for (int i = 0; i < brveza; i++)
+            {
+                Stanica t = veze[i].DrugaStanicaVeze(this);
+                if (!t.posecena && n == 0 || (veze[i] != vz[n-1] && veze[i].Linija == vz[n-1].Linija))
+                {
+                    vz[n] = veze[i];
+                    s = t.PutUIstojLiniji(ln, ref vz, n + 1);
+                }
+            }
+            posecena = false;
+            return s;
+        }
         internal double DuzinaDoCilja(double daljina, Stanica cilj, string linija, Veza td)
         {
-            double duzina = 0;
             if (daljina <= 0 && this == cilj)
             {
-                return duzina;
+                return -daljina;
             }
             else
             {
+                double duzina = 0;
                 for (int i = 0; i < brveza; i++)
                 {
-                    if (linija == veze[i].Linija && veze[i] != td)
+                    if (linija == veze[i].Linija && (veze[i] != td || this[linija] == 1))
                     {
-                        if (daljina <= 0)
-                        {
-                            duzina += -daljina;
-                            daljina = 0;
-                        }
-                        duzina += DuzinaDoCilja(daljina - veze[i].Udalj, cilj, linija, veze[i]);
+                        duzina += veze[i].DrugaStanicaVeze(this).DuzinaDoCilja(daljina - veze[i].Udalj, cilj, linija, veze[i]);
                     }
                 }
                 return duzina;
             }
         }
+        private bool postoji(string[] p, int n, string p_2)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                if (p[i] == p_2)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        internal string[] Poziv(Vozilo[] voz, int brVozila)
+        {
+            string[] nizImena = new string[1000];
+            int brimena = 0;
+            for (int i = 0; i < brveza; i++)
+            {
+                if (!postoji(nizImena, brimena, veze[i].Linija))
+                {
+                    nizImena[brimena] = veze[i].Linija;
+                    brimena++;
+                }
+            }
+            string[] ispis = new string[brimena];
+            int brojac = 0;
+            for (int i = 0; i < brimena; i++)
+            {
+                for (int j = 0; j < brVozila; j++)
+                {
+                    if (voz[j].ImeLinije == nizImena[i])
+                    {
+                        ispis[brojac] = nizImena[brojac] + " " + voz[j].kolikoDoStanice(this);
+                        brojac++;
+                    }
+                }
+            }
+            return ispis;
+        }
+        #region komentari
+        /*internal string[] LinijeKojePocinju()
+        {
+            string[] pocetak = new string[brveza];
+            int brojac = 0;
+            for (int i = 0; i < brveza; i++)
+            {
+                bool dodati = true;
+                for (int j = 0; j < brveza; j++)
+                {
+                    if(i != j && veze[i].Linija == veze[j].Linija)
+                    {
+                        dodati = false;
+                    }
+                }
+                if(dodati)
+                {
+                    pocetak[brojac] = veze[i].Linija;
+                    brojac++;
+                }
+            }
+            return pocetak;
+        }
+        internal Linija[] LinijeKojePocinju()
+        {
+            Linija[] ln = new Linija[brveza];
+            int n = 0;
+            for (int i = 0; i < brveza; i++)
+            {
+                if(this[veze[i].Linija] == 1)
+                {
+                    Veza[] vz = new Veza[10000];
+                    ln[n] = PutUIstojLiniji(veze[i].Linija, ref vz, 0);
+                    n++;
+                }
+            }
+            return ln;
+        }*/
+        #endregion
         #region MilosevicProffesionalac
-        internal double pocetnaRaz(string imelinije, double razdaljina, out Stanica zadnja)
+        /*internal double pocetnaRaz(string imelinije, double razdaljina, out Stanica zadnja)
         {
             if (razdaljina >= 0)
             {
@@ -137,7 +230,7 @@
                 posecena = false;
             }
             return velikarazdaljina;
-        }
+        }*/
         #endregion
     }
 }

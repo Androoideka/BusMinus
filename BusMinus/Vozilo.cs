@@ -1,17 +1,25 @@
 ﻿using System;
 
-namespace BusMinus
+namespace BusSharp
 {
-    class Vozilo
+    public class Vozilo
     {
         double brzina; // izrazena u kilometrima po casu
         Stanica pocStan;//pocetna stanica
         DateTime pocVrm;//pocetno vreme
         string imeLinije;
 
-        internal double Brizna
+        internal Vozilo(Stanica a, string linija_b)
         {
-            get { return brzina; }
+            pocStan = a;
+            imeLinije = linija_b;
+            pocVrm = DateTime.Now;
+            brzina = 60;
+        }
+
+        internal double Brzina
+        {
+            get { return brzina * 10 / 36; }
             set { brzina = value; }
         }
         internal Stanica PocStan
@@ -31,28 +39,18 @@ namespace BusMinus
         }
         internal double trenutniPolozajM() // predjeni put izrazen u metrima
         {
-            double vreme = DateTime.Now.Second - pocVrm.Second;
-            double predjenPut = (brzina / 3.6) * vreme;
+            double vreme = (DateTime.Now - pocVrm).TotalSeconds;
+            double predjenPut = Brzina * vreme;
             return predjenPut;
         }
         internal double kolikoDoStanice(Stanica stanica)
         {
-            //double put = pocStan.DuzinaDoCilja(trenutniPolozajM(), stanica, imeLinije, null);
-            double put = pocStan.razdaljina(trenutniPolozajM(), imeLinije, stanica);
-            double vreme = put / brzina;
+            //Gasic
+            double put = pocStan.DuzinaDoCilja(trenutniPolozajM(), stanica, imeLinije, null);
+            //Milosevic
+            //double put = pocStan.razdaljina(trenutniPolozajM(), imeLinije, stanica);
+            double vreme = put / Brzina;
             return vreme;
-        }
-        public class Autobus : Vozilo
-        {
-
-        }
-        public class Tramvaj : Vozilo
-        {
-
-        }
-        public class Kombi : Vozilo
-        {
-
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace BusMinus
+﻿namespace BusSharp
 {
-    internal class Veza
+    class Veza
     {
         Stanica stanica1, stanica2;
         string linija;
@@ -18,6 +18,8 @@
             stanica2 = kraj;
             linija = "";
             udaljenost = udalj;
+            poc.DodajVezu(this);
+            kraj.DodajVezu(this);
         }
         internal Veza(Stanica poc, Stanica kraj, string imeln, double udalj)
         {
@@ -25,6 +27,8 @@
             stanica2 = kraj;
             linija = imeln;
             udaljenost = udalj;
+            poc.DodajVezu(this);
+            kraj.DodajVezu(this);
         }
         internal string Linija
         {

@@ -1,6 +1,6 @@
-﻿namespace BusMinus
+﻿namespace BusSharp
 {
-    public class Put
+    class Put
     {
         Veza[] vz;
         Stanica cilj;
@@ -27,19 +27,16 @@
                 return duzPuta;
             }
         }
-        private int BrojPresedanja
+        private Stanica pocetna
         {
             get
             {
-                int brPresedanja = 0;
-                for (int i = 1; i < brVeza; i++)
+                Stanica p = cilj;
+                for (int i = brVeza-1; i >= 0; i--)
                 {
-                    if(!vz[i].Linija.Equals(vz[i-1].Linija))
-                    {
-                        brPresedanja++;
-                    }
+                    p = vz[i].DrugaStanicaVeze(p);
                 }
-                return brPresedanja;
+                return p;
             }
         }
         public static bool operator >(Put a, Put b)
@@ -58,21 +55,73 @@
             }
             return true;
         }
-        private double Vreme(double maxBrzina)
+        internal double Vreme(Vozilo[] a)
         {
-            double srednjaBrz = maxBrzina * 0.8;
-            double s = (Duzina / 1000) / (srednjaBrz);
-            s = s * 60;
-            if (s == 0)
+            double vreme = 0;
+            double rastojanje = 0;
+            string ln = "";
+            Vozilo v = null;
+            Stanica t = pocetna;
+            for (int i = 0; i < brVeza; i++)
             {
-                return s;
+                if(ln != vz[i].Linija)
+                {
+                    ln = vz[i].Linija;
+                    if (v != null)
+                    {
+                        vreme = vreme + rastojanje / v.Brzina;
+                    }
+                    for (int j = 0; j < a.Length; j++)
+                    {
+                        if(a[j].ImeLinije == vz[i].Linija)
+                        {
+                            v = a[j];
+                        }
+                    }
+                    vreme += v.kolikoDoStanice(t);
+                }
+                rastojanje += vz[i].Udalj;
+                t = vz[i].DrugaStanicaVeze(t);
+            }
+            if (v != null)
+            {
+                vreme = vreme + rastojanje / v.Brzina;
+            }
+            return vreme;
+        }
+        protected string IspisVeza()
+        {
+            string s = cilj.Ime;
+            Stanica t = cilj;
+            for (int i = brVeza-1; i >= 0; i--)
+            {
+                s = vz[i].DrugaStanicaVeze(t).Ime + "-" + vz[i].Udalj + "-" + s;
+                t = vz[i].DrugaStanicaVeze(t);
+            }
+            return s;
+        }
+        public virtual string Ispis(Vozilo[] a)
+        {
+            double Duz = Duzina;
+            Stanica t = cilj;
+            string s = cilj.Ime + " " + (int)(Vreme(a)/60) + " min" + " (";
+            if (Duzina > 1000)
+            {
+                s += Duz / 1000 + " km)";
             }
             else
             {
-                return s + 1;
+                s += Duz + " m)";
             }
+            for (int i = brVeza - 1; i >= 0; i--)
+            {
+                t = vz[i].DrugaStanicaVeze(t);
+                s = t.Ime + "( " + vz[i].Linija + ")" + "-->" + s;
+            }
+            return s;
         }
-        public string Ispis()
+        #region komentari
+        /*public virtual string Ispis()
         {
             double Duz = Duzina;
             Stanica t = cilj;
@@ -90,6 +139,35 @@
                 t = vz[i].DrugaStanicaVeze(t);
                 s = t.Ime + "( " + vz[i].Linija + ")" + "-->" + s;
             }
+            return s;
+        }
+        internal double Vreme(double maxBrzina)
+        {
+            double srednjaBrz = maxBrzina * 0.8;
+            double s = (Duzina / 1000) / (srednjaBrz);
+            s = s * 60;
+            if (s == 0)
+            {
+                return s;
+            }
+            else
+            {
+                return s + 1;
+            }
+        }*/
+        #endregion
+    }
+    class Linija : Put
+    {
+        string linija;
+        internal Linija(Stanica c, Veza[] s, int br) : base(c, s, br)
+        {
+            linija = s[0].Linija;
+        }
+        public string Ispis()
+        {
+            string s = IspisVeza();
+            s = linija + ":" + s;
             return s;
         }
     }
