@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BusMinus.Properties
+namespace Bus_Minus.Properties
 {
 
 

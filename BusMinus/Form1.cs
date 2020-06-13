@@ -10,22 +10,19 @@ namespace BusMinus
         {
             InitializeComponent();
         }
-        
         BusMinus GSP;
         private void Form1_Load(object sender, EventArgs e)
         {
             GSP = new BusMinus(File.ReadAllLines("veze.txt"));
             comboBox1.Items.AddRange(GSP.Prikaz());
-            comboBox2.Items.AddRange(GSP.Prikaz());
             comboBox1.SelectedIndex = 0;
+            comboBox2.Items.AddRange(GSP.Prikaz());
             comboBox2.SelectedIndex = 0;
         }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
             listBox1.Items.AddRange(GSP.Ispis(comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString()));
         }
-       
     }
 }

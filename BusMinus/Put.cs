@@ -19,7 +19,7 @@
         {
             get
             {
-                int duzPuta = vz[0].Udalj;
+                int duzPuta = 0;
                 for (int i = 0; i < brVeza; i++)
                 {
                     duzPuta += vz[i].Udalj;
@@ -34,7 +34,7 @@
                 int brPresedanja = 0;
                 for (int i = 1; i < brVeza; i++)
                 {
-                    if(vz[i].BrojLinije != vz[i-1].BrojLinije)
+                    if(!vz[i].Linija.Equals(vz[i-1].Linija))
                     {
                         brPresedanja++;
                     }
@@ -42,27 +42,20 @@
                 return brPresedanja;
             }
         }
-        public int BrojVeza
-        {
-            get
-            {
-                return brVeza;
-            }
-            set
-            {
-                brVeza = value;
-            }
-        }
         public static bool operator >(Put a, Put b)
         {
             if (a == null || b == null || a.Duzina <= b.Duzina)
+            {
                 return false;
+            }
             return true;
         }
         public static bool operator <(Put a, Put b)
         {
             if (a == null || b == null || a.Duzina >= b.Duzina)
+            {
                 return false;
+            }
             return true;
         }
         public string Ispis()

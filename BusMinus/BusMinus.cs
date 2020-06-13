@@ -26,9 +26,12 @@ namespace BusMinus
         }
         public Stanica this[string imeStanice] 
         {
-            get {
-                for (int i = 0; i < brStanica; i++) {
-                    if (stanice[i].Ime==imeStanice) {
+            get
+            {
+                for (int i = 0; i < brStanica; i++)
+                {
+                    if (stanice[i].Ime==imeStanice)
+                    {
                         return stanice[i];
                     }
                 }
@@ -68,7 +71,6 @@ namespace BusMinus
                 quickSort(a, k + 1, desno);
             }
         }
-
         private int podeli2(Put[] a, int levo, int desno)
         {
             Put[] b = new Put[desno - levo + 1];
@@ -95,19 +97,22 @@ namespace BusMinus
             }
             return ndesno + levo;
         }*/
-
         public string[] Ispis(string poc, string kraj)
         {
-            Veza[] st = new Veza[1000];
             Stanica pocetna = this[poc];
             Stanica krajna = this[kraj];
+            if (pocetna == null || krajna == null)
+            {
+                return null;
+            }
+            Veza[] st = new Veza[1000];
             int brojac = 0;
             Put[] putevi = new Put[10000];
             pocetna.Put(ref st, 0, ref putevi, ref brojac, krajna);
             Sortiraj(putevi, brojac);
             //quickSort(putevi, 0, brojac);
             string[] ispis = new string[brojac];
-            for (int i = 0; i < brojac; i++) 
+            for (int i = 0; i < brojac; i++)
             {
                 ispis[i] = putevi[i].Ispis();
             }

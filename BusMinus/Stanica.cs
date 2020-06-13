@@ -18,13 +18,10 @@
             veze = new Veza[1000];
             brveza = 0;
         }
-        public Stanica(Stanica s)
-        {
-            ime=s.ime; 
-        }
         public string Ime
         {
-            get {
+            get
+            {
                 return ime;
             }
             set
