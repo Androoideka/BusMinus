@@ -1,32 +1,32 @@
 ﻿namespace BusMinus
 {
-    public class Veza
+    internal class Veza
     {
         Stanica stanica1, stanica2;
         string linija;
-        int udaljenost;
-        public Veza()
+        double udaljenost;
+        internal Veza()
         {
             stanica1 = null;
             stanica2 = null;
             linija = "";
             udaljenost = 0;
         }
-        public Veza(Stanica poc, Stanica kraj, int udalj)
+        internal Veza(Stanica poc, Stanica kraj, double udalj)
         {
             stanica1 = poc;
             stanica2 = kraj;
             linija = "";
             udaljenost = udalj;
         }
-        public Veza(Stanica poc, Stanica kraj, string imeln, int udalj)
+        internal Veza(Stanica poc, Stanica kraj, string imeln, double udalj)
         {
             stanica1 = poc;
             stanica2 = kraj;
             linija = imeln;
             udaljenost = udalj;
         }
-        public string Linija
+        internal string Linija
         {
             get
             {
@@ -37,14 +37,14 @@
                 linija = value;
             }
         }
-        public int Udalj
+        internal double Udalj
         {
             get
             {
                 return udaljenost;
             }
         }
-        public Stanica DrugaStanicaVeze(Stanica s)
+        internal Stanica DrugaStanicaVeze(Stanica s)
         {
             if (s == stanica1)
             {

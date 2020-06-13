@@ -5,7 +5,7 @@
         Veza[] vz;
         Stanica cilj;
         int brVeza;
-        public Put(Stanica c, Veza[] s, int br)
+        internal Put(Stanica c, Veza[] s, int br)
         {
             brVeza = br;
             vz = new Veza[br];
@@ -15,11 +15,11 @@
                 vz[i] = s[i];
             }
         }
-        public int Duzina
+        private double Duzina
         {
             get
             {
-                int duzPuta = 0;
+                double duzPuta = 0;
                 for (int i = 0; i < brVeza; i++)
                 {
                     duzPuta += vz[i].Udalj;
@@ -27,7 +27,7 @@
                 return duzPuta;
             }
         }
-        public int BrojPresedanja
+        private int BrojPresedanja
         {
             get
             {
@@ -58,14 +58,37 @@
             }
             return true;
         }
+        private double Vreme(double maxBrzina)
+        {
+            double srednjaBrz = maxBrzina * 0.8;
+            double s = (Duzina / 1000) / (srednjaBrz);
+            s = s * 60;
+            if (s == 0)
+            {
+                return s;
+            }
+            else
+            {
+                return s + 1;
+            }
+        }
         public string Ispis()
         {
-            string s = cilj.Ime + "=" + Duzina;
+            double Duz = Duzina;
             Stanica t = cilj;
-            for (int i = brVeza-1; i >= 0; i--)
+            string s = cilj.Ime + " " + Vreme(60) + " min" + " ( ";
+            if (Duzina > 1000)
+            {
+                s += Duz / 1000 + " km )";
+            }
+            else
+            {
+                s += Duz + " m )";
+            }
+            for (int i = brVeza - 1; i >= 0; i--)
             {
                 t = vz[i].DrugaStanicaVeze(t);
-                s = t.Ime + "--->" + s;
+                s = t.Ime + "( " + vz[i].Linija + ")" + "-->" + s;
             }
             return s;
         }

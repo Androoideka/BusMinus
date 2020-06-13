@@ -4,38 +4,99 @@ namespace BusMinus
 {
     class BusMinus
     {
-        Stanica[] stanice;
+        Stanica[] stanice = new Stanica[100];
         int brStanica;
+        Karta k;
+
         public BusMinus(string[] niz)
         {
-            brStanica = Convert.ToInt32(niz[0]);
-            stanice = new Stanica[100 + brStanica];
-            for (int i = 0; i < brStanica; i++)
+            int brojac = niz.Length;
+            voz = new Vozilo[brojac];
+            for (int i = 0; i < brojac; i++)
             {
-                stanice[i] = new Stanica(niz[i + 1]);
-            }
-            for (int i = brStanica + 1; i < niz.Length; i++)
-            {
-                string[] s = niz[i].Split('-');
-                Stanica a = this[s[0]];
-                Stanica b = this[s[1]];
-                Veza v = new Veza(a, b, Convert.ToInt32(s[2]));
-                a.DodajVezu(v);
-                b.DodajVezu(v);
+                string[] s0 = niz[i].Split(':');
+                string linija = s0[0].ToString();
+                string[] s1 = s0[1].Split('-');
+                int brojac2 = s1.Length - 2;
+                for (int j = 0; j < brojac2; j += 2)
+                {
+                    Stanica a = this[s1[j]];
+                    double udaljenost = Convert.ToDouble(s1[j + 1]);
+                    Stanica b = this[s1[j + 2]];
+                    Veza v = new Veza(a, b, linija, udaljenost);
+                    a.DodajVezu(v);
+                    b.DodajVezu(v);
+                }
             }
         }
-        public Stanica this[string imeStanice] 
+        public string Karta 
+        {
+            get 
+            {
+                if(k != null)
+                {
+                    int t = k.PreostaloVreme;
+                    if (t < 86400)
+                    {
+                        int sat = t / 3600;
+                        int minut = t % 3600 / 60;
+                        int sekund = t % 60;
+                        return sat + ":" + minut + ":" + sekund;
+                    }
+                    else
+                    {
+                        return k.PreostaloVreme / 86400 + " Days";
+                    }
+                }
+                else
+                {
+                    return "Niste kupili kartu";
+                }
+            }
+            set 
+            {
+                KupiKartu(value);
+            }
+        }
+        public Stanica this[string imeStanice]
         {
             get
             {
                 for (int i = 0; i < brStanica; i++)
                 {
-                    if (stanice[i].Ime==imeStanice)
+                    if (stanice[i].Ime == imeStanice)
                     {
                         return stanice[i];
                     }
                 }
-                return null;
+                if (brStanica >= stanice.Length)
+                {
+                    Stanica[] t = new Stanica[brStanica + 100];
+                    for (int i = 0; i < brStanica; i++)
+                    {
+                        t[i] = stanice[i];
+                    }
+                    stanice = t;
+                }
+                stanice[brStanica] = new Stanica(imeStanice);
+                brStanica++;
+                return stanice[brStanica-1];
+            }
+        }
+        private void KupiKartu(string tip)
+        {
+            tip = tip.ToLower();
+            switch (tip)
+            {
+                case"jedna voznja":
+                    k = new JednokratnaKarta();
+                    break;
+                case "celodnevna voznja":
+                    k = new DnevnaKarta();
+                    break;
+                case "mesecna voznja":
+                    k = new MesecnaKarta();
+                    break;
             }
         }
         public string[] Prikaz()
@@ -47,57 +108,55 @@ namespace BusMinus
             }
             return p;
         }
-        public void Sortiraj(Put[] a, int n)
+        #region quicksort
+        private void razmeni(ref Put x, ref Put y)
         {
+            Put p = x;
+            x = y;
+            y = p;
+        }
+
+        private int podeli(Put[] a, int leva, int desna)
+        {
+            int k, i;
+            k = leva;
+            for (i = leva + 1; i <= desna; i++)
+                if (a[i] < a[leva])
+                {
+                    razmeni(ref a[i], ref a[k + 1]);
+                    k++;
+
+                }
+            razmeni(ref a[leva], ref a[k]);
+            return k;
+
+        }
+
+        private void quickSort(Put[] a, int l, int d)
+        {
+            if (l < d)
+            {
+                int k = podeli(a, l, d);
+                quickSort(a, l, k - 1);
+                quickSort(a, k + 1, d);
+
+            }
+        }
+        private void Sort(Put[] a, int n)
+        {
+            quickSort(a, 0, n - 1);
+        }
+        #endregion
+        private Put[] Prepisi(Put[] pt, int n)
+        {
+            Put[] p = new Put[n];
             for (int i = 0; i < n; i++)
             {
-                for (int j = i+1; j < n; j++)
-                {
-                    if (a[i] > a[j])
-                    {
-                        Put temp = a[i];
-                        a[i] = a[j];
-                        a[j] = temp;
-                    }
-                }
+                p[i] = pt[i];
             }
+            return p;
         }
-       /* private void quickSort(Put[] a, int levo, int desno)
-        {
-            if (levo < desno)
-            {
-                int k = podeli2(a, levo, desno);
-                quickSort(a, levo, k - 1);
-                quickSort(a, k + 1, desno);
-            }
-        }
-        private int podeli2(Put[] a, int levo, int desno)
-        {
-            Put[] b = new Put[desno - levo + 1];
-            Put k = a[levo];
-            int nlevo = 0;
-            int ndesno = desno - levo;
-            for (int i = levo; i <= desno; i++)
-            {
-                if (k < a[i])
-                {
-                    b[ndesno] = a[i];
-                    ndesno--;
-                }
-                else
-                {
-                    b[nlevo] = a[i];
-                    nlevo++;
-                }
-            }
-            b[ndesno] = k;
-            for (int i = 0; i < desno - levo + 1; i++)
-            {
-                a[levo + i] = b[i];
-            }
-            return ndesno + levo;
-        }*/
-        public string[] Ispis(string poc, string kraj)
+        private Put[] Izbaci(string poc, string kraj)
         {
             Stanica pocetna = this[poc];
             Stanica krajna = this[kraj];
@@ -109,12 +168,30 @@ namespace BusMinus
             int brojac = 0;
             Put[] putevi = new Put[10000];
             pocetna.Put(ref st, 0, ref putevi, ref brojac, krajna);
-            Sortiraj(putevi, brojac);
-            //quickSort(putevi, 0, brojac);
-            string[] ispis = new string[brojac];
-            for (int i = 0; i < brojac; i++)
+            int p = k.PreostaloVreme;
+            int l = 0;
+            for (int i = 0; i < brojac; i++) 
             {
-                ispis[i] = putevi[i].Ispis();
+                if (putevi[i].Vreme(60)>p) 
+                {
+                    l++;
+                }
+                else
+                {
+                    putevi[i-l] = putevi[i];
+                }
+            }
+            brojac -= l;
+            return Prepisi(putevi, brojac);
+        }
+        public string[] Ispis(string poc, string kraj)
+        {
+            Put[] p = Izbaci(poc, kraj);
+            Sort(p, p.Length);
+            string[] ispis = new string[p.Length];
+            for (int i = 0; i < ispis.Length; i++)
+            {
+                ispis[i] = p[i].Ispis();
             }
             return ispis;
         }
