@@ -1,60 +1,79 @@
-﻿namespace Bus_Minus
+﻿namespace BusMinus
 {
     public class Put
     {
-        Stanica[] st;
-        int brst;
-        int duzinaputa;
-
-        public Put()
+        Veza[] vz;
+        Stanica cilj;
+        int brVeza;
+        public Put(Stanica c, Veza[] s, int br)
         {
-            st = new Stanica[1000];
-            brst = 0;
-            duzinaputa = 0;
-        }
-        public Put(Put put)
-        {
-            duzinaputa = put.duzinaputa;
-            st = new Stanica[put.brst+1000];
-            brst = put.brst;
-            for (int i = 0; i < brst; i++)
+            brVeza = br;
+            vz = new Veza[br];
+            cilj = c;
+            for (int i = 0; i < br; i++)
             {
-                st[i] = new Stanica(put.st[i]);
+                vz[i] = s[i];
             }
         }
         public int Duzina
         {
-            get {
-                return duzinaputa;
-            }
-            set {
-                duzinaputa = value;
+            get
+            {
+                int duzPuta = vz[0].Udalj;
+                for (int i = 0; i < brVeza; i++)
+                {
+                    duzPuta += vz[i].Udalj;
+                }
+                return duzPuta;
             }
         }
-        public int BrojStanica
+        public int BrojPresedanja
         {
             get
             {
-                return brst;
+                int brPresedanja = 0;
+                for (int i = 1; i < brVeza; i++)
+                {
+                    if(vz[i].BrojLinije != vz[i-1].BrojLinije)
+                    {
+                        brPresedanja++;
+                    }
+                }
+                return brPresedanja;
+            }
+        }
+        public int BrojVeza
+        {
+            get
+            {
+                return brVeza;
             }
             set
             {
-                brst = value;
+                brVeza = value;
             }
         }
-        public void DodajStanicu(Stanica v)
+        public static bool operator >(Put a, Put b)
         {
-            st[brst] = v;
-            brst++;
+            if (a == null || b == null || a.Duzina <= b.Duzina)
+                return false;
+            return true;
         }
-        public string Ispis() 
+        public static bool operator <(Put a, Put b)
         {
-            string s = " ";
-            for (int i = 0; i < brst; i++)
-			{
-			   s+= st[i].Ime + "-";
-			}
-            s += duzinaputa;
+            if (a == null || b == null || a.Duzina >= b.Duzina)
+                return false;
+            return true;
+        }
+        public string Ispis()
+        {
+            string s = cilj.Ime + "=" + Duzina;
+            Stanica t = cilj;
+            for (int i = brVeza-1; i >= 0; i--)
+            {
+                t = vz[i].DrugaStanicaVeze(t);
+                s = t.Ime + "--->" + s;
+            }
             return s;
         }
     }

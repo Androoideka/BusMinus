@@ -1,4 +1,4 @@
-﻿onamespace Bus_Minus
+﻿namespace BusMinus
 {
     public class Stanica
     {
@@ -37,12 +37,11 @@
             veze[brveza] = v;
             brveza++;
         }
-        public void Put(ref Stanica[] st, int duzinaPuta, int n, ref Put[] pt, ref int brojac, Stanica cilj)
+        public void Put(ref Veza[] vz, int n, ref Put[] pt, ref int brojac, Stanica cilj)
         {
-            st[n] = this;
             if (this == cilj)
             {
-                pt[brojac] = new Put(st, n+1, duzinaPuta);
+                pt[brojac] = new Put(cilj, vz, n);
                 brojac++;
                 return;
             }
@@ -52,7 +51,8 @@
                 Stanica t = veze[i].DrugaStanicaVeze(this);
                 if (!t.posecena)
                 {
-                    t.Put(ref st, duzinaPuta + veze[i].Udalj, n + 1, ref pt, ref brojac, cilj);
+                    vz[n] = veze[i];
+                    t.Put(ref vz, n + 1, ref pt, ref brojac, cilj);
                 }
             }
             posecena = false;

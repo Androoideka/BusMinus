@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bus_Minus
+namespace BusMinus
 {
     class BusMinus
     {
@@ -17,8 +17,8 @@ namespace Bus_Minus
             for (int i = brStanica + 1; i < niz.Length; i++)
             {
                 string[] s = niz[i].Split('-');
-                Stanica a = stanice[FindIndexInArray(s[0])];
-                Stanica b = stanice[FindIndexInArray(s[1])];
+                Stanica a = this[s[0]];
+                Stanica b = this[s[1]];
                 Veza v = new Veza(a, b, Convert.ToInt32(s[2]));
                 a.DodajVezu(v);
                 b.DodajVezu(v);
@@ -35,15 +35,6 @@ namespace Bus_Minus
                 return null;
             }
         }
-        public int FindIndexInArray(string x)
-        {
-            for (int i = 0; i < brStanica; i++)
-            {
-                if (stanice[i].Ime == x)
-                    return i;
-            }
-            return -1;
-        }
         public string[] Prikaz()
         {
             string[] p = new string[brStanica];
@@ -53,30 +44,68 @@ namespace Bus_Minus
             }
             return p;
         }
-        public void Sortiraj(Put[] pt, int brPt)
+        public void Sortiraj(Put[] a, int n)
         {
-            /*Put temp;
-            for (int i = 0; i < brPt; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = i+1; j < brPt; j++)
+                for (int j = i+1; j < n; j++)
                 {
-                    if (pt[i].Duzina<pt[j].Duzina)
+                    if (a[i] > a[j])
                     {
-                        temp =pt[i];
-                        pt[i] = pt[j];
-                        pt[j] = temp;
+                        Put temp = a[i];
+                        a[i] = a[j];
+                        a[j] = temp;
                     }
                 }
-            }*/
+            }
         }
+       /* private void quickSort(Put[] a, int levo, int desno)
+        {
+            if (levo < desno)
+            {
+                int k = podeli2(a, levo, desno);
+                quickSort(a, levo, k - 1);
+                quickSort(a, k + 1, desno);
+            }
+        }
+
+        private int podeli2(Put[] a, int levo, int desno)
+        {
+            Put[] b = new Put[desno - levo + 1];
+            Put k = a[levo];
+            int nlevo = 0;
+            int ndesno = desno - levo;
+            for (int i = levo; i <= desno; i++)
+            {
+                if (k < a[i])
+                {
+                    b[ndesno] = a[i];
+                    ndesno--;
+                }
+                else
+                {
+                    b[nlevo] = a[i];
+                    nlevo++;
+                }
+            }
+            b[ndesno] = k;
+            for (int i = 0; i < desno - levo + 1; i++)
+            {
+                a[levo + i] = b[i];
+            }
+            return ndesno + levo;
+        }*/
+
         public string[] Ispis(string poc, string kraj)
         {
-            Stanica[] st = new Stanica[1000];
+            Veza[] st = new Veza[1000];
             Stanica pocetna = this[poc];
             Stanica krajna = this[kraj];
             int brojac = 0;
             Put[] putevi = new Put[10000];
-            pocetna.Put(ref st, 0, 0, ref putevi, ref brojac, krajna);
+            pocetna.Put(ref st, 0, ref putevi, ref brojac, krajna);
+            Sortiraj(putevi, brojac);
+            //quickSort(putevi, 0, brojac);
             string[] ispis = new string[brojac];
             for (int i = 0; i < brojac; i++) 
             {

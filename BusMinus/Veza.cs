@@ -1,68 +1,49 @@
-﻿namespace Bus_Minus
+﻿namespace BusMinus
 {
     public class Veza
     {
-        Stanica pocetnaSt, krajnjaSt;
-        int udaljenost;
+        Stanica stanica1, stanica2;
+        int udaljenost, brojLinije;
 
         public Veza()
         {
-            pocetnaSt = new Stanica();
-            krajnjaSt = new Stanica();
+            stanica1 = null;
+            stanica2 = null;
             udaljenost = 0;
         }
-        public Veza(string poc, string kraj, int udalj)
-        {
-            pocetnaSt = new Stanica(poc);
-            krajnjaSt = new Stanica(kraj);
-            udaljenost = udalj;
-        }
-
         public Veza(Stanica poc, Stanica kraj, int udalj)
         {
-            pocetnaSt = poc;
-            krajnjaSt = kraj;
+            stanica1 = poc;
+            stanica2 = kraj;
             udaljenost = udalj;
         }
-
-        public Stanica POCStanica
+        public int BrojLinije
         {
             get
             {
-                return pocetnaSt;
+                return brojLinije;
             }
             set
             {
-                pocetnaSt = new Stanica(value);
-            }
-        }
-        public Stanica KRAJstanica
-        {
-            get {
-                return krajnjaSt;
-            }
-            set {
-                krajnjaSt = new Stanica(value);
+                brojLinije = value;
             }
         }
         public int Udalj
         {
-            get {
+            get
+            {
                 return udaljenost;
-            }
-            set {
-                udaljenost = value;
             }
         }
         public Stanica DrugaStanicaVeze(Stanica s)
         {
-            if (s == pocetnaSt)
+            if (s == stanica1)
             {
-                return krajnjaSt;
+                return stanica2;
             }
-            else if (s == krajnjaSt)
+            else if (s == stanica2)
             {
-                return pocetnaSt;
+                return stanica1;
             }
             return null;
         }

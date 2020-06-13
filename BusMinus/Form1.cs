@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.IO;
 
-namespace Bus_Minus
+namespace BusMinus
 {
     public partial class Form1 : Form
     {
@@ -17,10 +17,13 @@ namespace Bus_Minus
             GSP = new BusMinus(File.ReadAllLines("veze.txt"));
             comboBox1.Items.AddRange(GSP.Prikaz());
             comboBox2.Items.AddRange(GSP.Prikaz());
+            comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            listBox1.Items.Clear();
             listBox1.Items.AddRange(GSP.Ispis(comboBox1.SelectedItem.ToString(), comboBox2.SelectedItem.ToString()));
         }
        
